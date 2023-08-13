@@ -3,7 +3,6 @@ const db = require('./initFirebase');
 const { ref, set, get, child, remove } = require("firebase-admin/database");
 const app = express();
 const crypto = require('crypto');
-const PORT = 3000;
 require('dotenv').config();
 
 function encrypt(message){
@@ -73,14 +72,16 @@ app.post('/signup', async (req, res)=>{
     res.sendStatus(result);
 })
 
-app.get("/yo", (req, res)=>{
-    res.send("yoooo");
+app.get("/", (req, res)=>{
+    res.send("Express with Vercel");
 })
 
-app.listen(PORT, (error) =>{
+app.listen(5000, (error) =>{
     if(!error)
-        console.log("Server is Successfully Running, and App is listening on port "+ PORT)
+        console.log("Server is Successfully Running, and App is listening on port "+ 5000)
     else 
         console.log("Error occurred, server can't start", error);
     }
 );
+
+module.exports = app;
