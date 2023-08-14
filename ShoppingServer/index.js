@@ -6,15 +6,13 @@ const crypto = require('crypto');
 require('dotenv').config();
 var cors = require('cors')
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-});
-
-// const proxy = require('express-http-proxy')
-// app.use('/', proxy('http://localhost:3000'))
-  
+app.use(cors({
+    'allowedHeaders': ['Content-Type'], 
+    'exposedHeaders': ['Content-Type'], 
+    'origin': '*',
+    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'preflightContinue': false
+}));
 
 // Current requests:
 // Post / Login (username, password)

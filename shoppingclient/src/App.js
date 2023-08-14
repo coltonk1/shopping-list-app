@@ -40,7 +40,7 @@ function refreshAll(){
 
 function App(){
   const makeAPIcall = async () => {
-    var info = await loginRequest("", "!");
+    var info = await loginRequest();
     console.log(info)
   }
   useEffect(()=>{
