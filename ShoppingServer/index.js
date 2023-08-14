@@ -7,11 +7,11 @@ require('dotenv').config();
 var cors = require('cors')
 
 app.use(cors({
-    'allowedHeaders': ['Content-Type'], 
-    'exposedHeaders': ['Content-Type'], 
-    'origin': '*',
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    'preflightContinue': false
+    allowedHeaders: ['Content-Type'], 
+    exposedHeaders: ['Content-Type'], 
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false
 }));
 
 app.options('/getLists', function (req, res) {
