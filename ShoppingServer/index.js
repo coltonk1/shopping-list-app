@@ -104,14 +104,13 @@ app.post('/getLists', async (req, res)=>{
     const body = req.body;
     var username = body.username.toString();
     var password = body.password.toString();
-    res.send("test");
-    // var UserData = await valid(username, password);
-    // if(UserData === false){
-    //     res.send(null);
-    //     return;
-    // };
-    // console.log(UserData.JoinedLists);
-    // res.send(UserData.JoinedLists || {});
+    var UserData = await valid(username, password);
+    if(UserData === false){
+        res.send(null);
+        return;
+    };
+    console.log(UserData.JoinedLists);
+    res.send(UserData.JoinedLists || {});
 })
 
 app.get("/", (req, res)=>{
