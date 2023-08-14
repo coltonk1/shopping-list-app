@@ -40,6 +40,27 @@ async function getData(location){
     return data; 
 }
 
+app.post('/getLists', async (req, res)=>{
+    const body = req.body;
+    var username = body.username.toString();
+    var password = body.password.toString();
+    if(!valid(username, password)){
+        res.send(null);
+        return;
+    }
+    res.send(JSON.stringify(UserData));
+})
+
+async function valid(username, password){
+    var UserData = await getData("/Users/" + encrypt(username)).catch((error)=>{
+        return false;
+    })
+    if(UserData.Password != encrypt(password)){
+        return false;
+    }
+    return UserData;
+}
+
 // Can return 500 (Server Error), 404 (Not Found), 401 (Unauthorized), data
 app.post('/login', async (req, res)=>{
     const body = req.body;
@@ -69,7 +90,7 @@ async function createData(location, data){
     return 201;
 }
 
-// Can return 401 (Unauthorized), 406 (Not Acceptable), 409 (Conflict), result
+// Can return 401 (Unauthorized), 406 (Not Acceptable), 409 (Conflict), Email (Email Conflict), result
 app.post('/signup', async (req, res)=>{
     const body = req.body;
     if(body.password == null || body.username == null){

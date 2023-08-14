@@ -73,7 +73,18 @@ class MainApp extends Component {
 
   // Can return 500 (Server Error), 404 (Not Found), 401 (Unauthorized), data
   async login(username, password){
-    var result = await loginRequest(username, password);
+    var result = await loginRequest(username, password).catch((error)=>{
+      this.setState({
+        currentScreen: <ErrorScreen />,
+      })
+      return;
+    })
+    if(result === undefined){
+      this.setState({
+        currentScreen: <ErrorScreen />,
+      })
+      return;
+    }
     if(result === "Unauthorized" || result === "Not Found"){
       this.setState({
         currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Username or password incorrect."/>
@@ -88,7 +99,7 @@ class MainApp extends Component {
       localStorage.setItem("shopUser", document.getElementById("username").value);
       localStorage.setItem("shopPass", document.getElementById("password").value);
       this.setState({
-        currentScreen: <MainScreen />,
+        currentScreen: <MainScreen sendToLogin={this.goToLogin}/>,
       })
     }
   }
@@ -96,22 +107,48 @@ class MainApp extends Component {
   // Can return 401 (Unauthorized), 406 (Not Acceptable), 409 (Conflict), result
   async signup(username, password, display, email){
     var result = await signupRequest(username, password, display, email);
-    console.log(result)
-    if(result === "Unauthorized" || result === "Not Found"){
+    if(result === undefined){
       this.setState({
-        currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Username or password incorrect."/>
+        currentScreen: <ErrorScreen />,
+      })
+      return;
+    }
+
+    if(result === "Unauthorized" || result === "Not Acceptable"){
+      this.setState({
+        currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup(
+          document.getElementById("username").value, 
+          document.getElementById("password").value,
+          document.getElementById("displayName").value,
+          document.getElementById("email").value
+          )} error="One of the fields are incorrect."/>,
       })
     }
-    else if(result === "Internal Server Error"){
+    else if(result === "Conflict"){
         this.setState({
-          currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Server error."/>
+          currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup(
+            document.getElementById("username").value, 
+            document.getElementById("password").value,
+            document.getElementById("displayName").value,
+            document.getElementById("email").value
+            )} error="Username already in use"/>,
         })
+    }
+    else if(result === "Email"){
+      this.setState({
+        currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup(
+          document.getElementById("username").value, 
+          document.getElementById("password").value,
+          document.getElementById("displayName").value,
+          document.getElementById("email").value
+          )} error="Email already in use"/>,
+      })
     }
     else{
       localStorage.setItem("shopUser", document.getElementById("username").value);
       localStorage.setItem("shopPass", document.getElementById("password").value);
       this.setState({
-        currentScreen: <MainScreen />,
+        currentScreen: <MainScreen sendToLogin={this.goToLogin}/>,
       })
     }
   }
@@ -123,7 +160,12 @@ class MainApp extends Component {
   }
   goToSignup(){
     this.setState({
-      currentScreen: <SignupScreen  goToLogin={this.goToLogin} signup={()=>this.signup()} error=""/>,
+      currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup(
+        document.getElementById("username").value, 
+        document.getElementById("password").value,
+        document.getElementById("displayName").value,
+        document.getElementById("email").value
+        )} error=""/>,
     })
   }
 
@@ -132,12 +174,28 @@ class MainApp extends Component {
     var password = localStorage.getItem("shopPass");
     if(username === null || password === null){
       this.setState({
-        currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup()} error=""/>,
+        currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup(
+          document.getElementById("username").value, 
+          document.getElementById("password").value,
+          document.getElementById("displayName").value,
+          document.getElementById("email").value
+          )} error=""/>,
       })
       return;
     }
-    var state = <MainScreen />;
-    var info = await loginRequest(username, password);
+    var state = <MainScreen sendToLogin={this.goToLogin}/>;
+    var info = await loginRequest(username, password).catch((error)=>{
+      this.setState({
+        currentScreen: <ErrorScreen />,
+      })
+      return;
+    })
+    if(info === undefined){
+      this.setState({
+        currentScreen: <ErrorScreen />,
+      })
+      return;
+    }
     if(info === "Internal Server Error"){
         state = <ErrorScreen />;
     }
@@ -171,9 +229,10 @@ class MainApp extends Component {
 class ErrorScreen extends Component {
   render(){
     return(
-      <div>
+      <div id = "errorScreen">
         Uh oh! Something went wrong.
         Maybe you have no internet?
+        Come back later.
       </div>
     )
   }
@@ -226,9 +285,9 @@ class SignupScreen extends Component {
             <div className='smallTitle'>Password</div>
             <input placeholder='Enter password' type='password' id="password"/>
             <div className='smallTitle'>Display Name</div>
-            <input  placeholder='Enter display name'/>
+            <input  placeholder='Enter display name' id = "displayName"/>
             <div className='smallTitle'>email</div>
-            <input placeholder='Enter email' type='email'/>
+            <input placeholder='Enter email' type='email' id="email"/>
           </div>
           <br />
           <div className = "largeButton" onClick={this.props.signup}>Sign up</div>
@@ -243,30 +302,121 @@ class SignupScreen extends Component {
   }
 }
 
+class Item extends Component {
+  render(){
+    return(
+      <div className = "item">
+        <div className = "itemName">{this.props.name}</div>
+        <div className = "itemDescription">{this.props.description}</div>
+        <div className = "itemAmount">{this.props.amount}</div>
+      </div>
+    )
+  }
+}
+
+class List extends Component {
+  render(){
+    return(
+      <div className='list'>
+        {this.props.name}
+      </div>
+    )
+  }
+}
+
+async function requestLists(username, password){
+  var data = {
+    username: username,
+    password: password
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/getLists", {
+      method: 'POST',
+      mode: "cors",
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+  return await result.json().catch((error)=>{
+    console.log(error);
+  });
+}
+
+async function requestItems(username, password, listID){
+  var data = {
+    username: username,
+    password: password,
+    listID: listID,
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/getItems", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  return await result.json().catch((error)=>{
+    console.log(error);
+  })
+}
+
 class MainScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
-      titleText: "Select List",
-      allItems: <div />,
-      joinedLists: <div />
+      AllItems: [],
+      AllLists: [],
+      currentList: localStorage.getItem("currentList") || "",
+      currentListName: "",
     }
-    this.refresh = this.refresh.bind(this);
   }
 
   async componentDidMount(){
+    var user = localStorage.getItem("listUser")
+    var pass = localStorage.getItem("listPass");
+    if(!user || !pass){
+      this.props.sendToLogin();
+    }
+    var lists = await requestLists(user, pass);
+    console.log(lists);
+    var currentList = this.state.currentList;
+    if(lists === null) return;
+    var listElements = [];
+    for(var key in lists){
+      listElements.push(<List id={key} display={lists[key].DisplayName}/>)
+      if(currentList = "") currentList = key;
+    }
 
-  }
+    var items = {};
+    var itemElements = [];
+    var currentListName = "no name";
+    if(currentList !== "") items = await requestItems(user, pass, currentList);
+    for(var key in items){
+      itemElements.push(<Item name={key} description={items[key].Description} amount={items[key].Amount}/>)
+      if(currentList = "") currentList = key;
+      if(key === currentList){
+        currentListName = items[key].DisplayName;
+      }
+    }
 
-  refresh(){
-    this.componentDidMount();
+    this.setState({
+      AllItems: itemElements,
+      AllLists: listElements,
+      currentList: currentList,
+      currentListName: currentListName,
+    })
   }
 
   render(){
-    const {titleText, allItems, joinedLists} = this.state;
+    const {AllItems, AllLists, currentListName} = this.state;
     return (
-      <div id="wrapper">
-        {/* <img id = "refresh" onClick={this.refresh} alt='refresh icon' src={}/> */}
+      <div id="MainWrapper">
+        {currentListName}
+        <br></br>
+        {AllLists}
+        <br></br>
+        {AllItems}
       </div>
     );
   }
