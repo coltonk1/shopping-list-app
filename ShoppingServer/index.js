@@ -49,7 +49,8 @@ app.post('/getLists', async (req, res)=>{
         res.send(null);
         return;
     };
-    res.send(JSON.stringify(UserData.JoinedLists));
+    console.log(UserData.JoinedLists);
+    res.send(UserData.JoinedLists || {});
 })
 
 async function valid(username, password){
