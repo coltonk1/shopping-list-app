@@ -325,21 +325,21 @@ class List extends Component {
 }
 
 async function requestLists(username, password){
-  var data = {
-    username: username,
-    password: password
-  }
-  var result = await fetch(process.env.REACT_APP_api_url + "/getLists", {
-      method: 'POST',
-      mode: "cors",
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-  })
-  return await result.text().catch((error)=>{
-    console.log(error);
-  });
+  // var data = {
+  //   username: username,
+  //   password: password
+  // }
+  // var result = await fetch(process.env.REACT_APP_api_url + "/getLists", {
+  //     method: 'POST',
+  //     mode: "cors",
+  //     headers: {
+  //         'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(data),
+  // })
+  // return await result.text().catch((error)=>{
+  //   console.log(error);
+  // });
 }
 
 async function requestItems(username, password, listID){

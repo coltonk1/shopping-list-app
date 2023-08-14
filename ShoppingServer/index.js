@@ -9,10 +9,19 @@ var cors = require('cors')
 app.use(cors({
     allowedHeaders: ['Content-Type'], 
     exposedHeaders: ['Content-Type'], 
-    origin: '*',
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false
 }));
+
+app.use(function(req, res, next) {
+    res.setHeader("Access-Control-Allow-Origin", '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS,PUT,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept');
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 app.options('/getLists', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
