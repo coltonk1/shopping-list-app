@@ -4,3 +4,6 @@
 /ShoppingServer/firebase-key.json
 /testclient
 /ShoppingClient/node_modules
+/ShoppingClient/.env
+/ShoppingClient/android
+/ShoppingClient/build

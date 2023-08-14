@@ -2,7 +2,7 @@
   padding: 0;
   margin: auto;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #ffffff90;
+  color: #00000090;
   user-select: none;
 }
 
@@ -19,8 +19,8 @@ input {
   border: none;
   background: none;
   width: 100%;
-  color: white;
-  border-bottom: 1px solid white;
+  color: black;
+  border-bottom: 1px solid gray;
   padding-left: 1vw;
   padding-right: 1vw;
   padding-bottom: 5px;
@@ -29,11 +29,11 @@ input {
 }
 
 input::placeholder {
-  color: #ffffff90;
+  color: #00000090;
 }
 
 .smallTitle {
-  color: whitesmoke;
+  color: gray;
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -46,7 +46,7 @@ input::placeholder {
 #wrapper {
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(to bottom, #58b5eb, #3538da);
+  background: white;
 }
 
 #loading {
@@ -62,9 +62,10 @@ input::placeholder {
   padding: 1vh 0;
   width: 80vw;
   color: white;
-  font-weight: bolder;
+  font-weight: bold;
   background: #ffffff10;
   font-size: 25px;
+  background: #57B0EA;
 }
 
 .inline {
@@ -74,7 +75,7 @@ input::placeholder {
 
 .link {
   font-size: inherit;
-  color: whitesmoke;
+  color: #57B0EA;
   white-space: pre;
   font-weight: bold;
 }
@@ -98,7 +99,6 @@ input::placeholder {
   top: 10vh;
   left: 0;
   right: 0;
-  filter: brightness(500%);
 }
 
 .smallTopMargin {
@@ -108,7 +108,15 @@ input::placeholder {
   margin-left: 5vw;
 }
 
-#error {
-  color: yellow;
-  font-weight: bold;
+#area {
+  background: #00000010;
+  border-radius: 20px;
+  padding: 15px;
+}
+
+#blob {
+  position: absolute;
+  top: -20vh;
+  right: -45vw;
+  width: 100vw;
 }

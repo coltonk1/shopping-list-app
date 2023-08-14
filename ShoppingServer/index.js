@@ -40,6 +40,7 @@ async function getData(location){
     return data; 
 }
 
+// Can return 500 (Server Error), 404 (Not Found), 401 (Unauthorized), data
 app.post('/login', async (req, res)=>{
     const body = req.body;
     if(body.password == null || body.username == null){
@@ -49,12 +50,12 @@ app.post('/login', async (req, res)=>{
     var UserData = await getData("/Users/" + encrypt(body.username.toString())).catch((error)=>{
         return 500;
     })
-    if(UserData == null || UserData == undefined){
-        res.sendStatus(404);
-        return;
-    }
     if(UserData.Password != encrypt(body.password.toString())){
         res.sendStatus(401);
+        return;
+    }
+    if(UserData == null || UserData == undefined){
+        res.sendStatus(404);
         return;
     }
     res.send(UserData);
