@@ -190,6 +190,7 @@ class MainApp extends Component {
       })
       return;
     })
+
     if(info === undefined){
       this.setState({
         currentScreen: <ErrorScreen />,
@@ -204,7 +205,6 @@ class MainApp extends Component {
     }
     this.setState({
       currentScreen: state,
-      information: info,
     })
   }
 
@@ -325,21 +325,21 @@ class List extends Component {
 }
 
 async function requestLists(username, password){
-  // var data = {
-  //   username: username,
-  //   password: password
-  // }
-  // var result = await fetch(process.env.REACT_APP_api_url + "/getLists", {
-  //     method: 'POST',
-  //     mode: "cors",
-  //     headers: {
-  //         'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(data),
-  // })
-  // return await result.text().catch((error)=>{
-  //   console.log(error);
-  // });
+  var data = {
+    username: username,
+    password: password
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/getLists", {
+      method: 'POST',
+      mode: "cors",
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+  return await result.text().catch((error)=>{
+    console.log(error);
+  });
 }
 
 async function requestItems(username, password, listID){
@@ -373,15 +373,14 @@ class MainScreen extends Component {
   }
 
   async componentDidMount(){
-    var user = localStorage.getItem("listUser")
-    var pass = localStorage.getItem("listPass");
+    var user = localStorage.getItem("shopUser")
+    var pass = localStorage.getItem("shopPass");
     if(!user || !pass){
       this.props.sendToLogin();
     }
     var lists = await requestLists(user, pass);
-    console.log(lists);
     var currentList = this.state.currentList;
-    if(lists === null) return;
+    if(lists === null || lists === {}) return;
     var listElements = [];
     for(var key in lists){
       listElements.push(<List id={key} display={lists[key].DisplayName}/>)
