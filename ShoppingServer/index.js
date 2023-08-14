@@ -44,11 +44,12 @@ app.post('/getLists', async (req, res)=>{
     const body = req.body;
     var username = body.username.toString();
     var password = body.password.toString();
-    if(!valid(username, password)){
+    var UserData = await valid(username, password);
+    if(UserData === false){
         res.send(null);
         return;
-    }
-    res.send(JSON.stringify(UserData));
+    };
+    res.send(JSON.stringify(UserData.JoinedLists));
 })
 
 async function valid(username, password){
