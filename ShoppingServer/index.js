@@ -48,7 +48,8 @@ app.post('/login', async (req, res)=>{
         return;
     }
     var UserData = await getData("/Users/" + encrypt(body.username.toString())).catch((error)=>{
-        return 500;
+        res.sendStatus(500);
+        return;
     })
     if(UserData.Password != encrypt(body.password.toString())){
         res.sendStatus(401);
@@ -68,6 +69,7 @@ async function createData(location, data){
     return 201;
 }
 
+// Can return 401 (Unauthorized), 406 (Not Acceptable), 409 (Conflict), result
 app.post('/signup', async (req, res)=>{
     const body = req.body;
     if(body.password == null || body.username == null){
@@ -82,7 +84,9 @@ app.post('/signup', async (req, res)=>{
         res.sendStatus(409);
         return;
     }
-    let result = await createData("/Users/" + encrypt(body.username), {DataCreated: new Date().toJSON().slice(0, 10), DisplayName: body.display, Password: encrypt(body.password)});
+    let emailEqual = await db.ref("/Users/").orderByChild("Email").equalTo(body.email).limitToLast(1).once("value");
+    console.log(await emailEqual);
+    let result = await createData("/Users/" + encrypt(body.username), {DataCreated: new Date().toJSON().slice(0, 10), DisplayName: body.display, Password: encrypt(body.password), Email: body.email});
     res.sendStatus(result);
 })
 

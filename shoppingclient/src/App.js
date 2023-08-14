@@ -17,11 +17,12 @@ async function loginRequest(username, password){
   })
   return await result.text();
 }
-async function signupRequest(username, password, displayName){
+async function signupRequest(username, password, displayName, email){
   var data = {
     username: username,
     password: password,
-    display: displayName
+    display: displayName,
+    email: email
   }
   var result = await fetch(process.env.REACT_APP_api_url + "/signup", {
       method: 'POST',
@@ -34,10 +35,6 @@ async function signupRequest(username, password, displayName){
   return await result.text();
 }
 
-function refreshAll(){
-  document.getElementById("refresh").click();
-}
-
 function App(){
   useEffect(()=>{
     document.title = "Shopping List";
@@ -45,10 +42,6 @@ function App(){
   }, []);
 
   return <MainApp />
-}
-
-async function handleSubmit(e){
-
 }
 
 class LoadingScreen extends Component {
@@ -81,18 +74,12 @@ class MainApp extends Component {
   // Can return 500 (Server Error), 404 (Not Found), 401 (Unauthorized), data
   async login(username, password){
     var result = await loginRequest(username, password);
-    console.log(result)
-    if(result == "Not Found"){
-      this.setState({
-        currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Something went wrong."/>
-      })
-    }
-    else if(result == "Unathorized"){
+    if(result === "Unauthorized" || result === "Not Found"){
       this.setState({
         currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Username or password incorrect."/>
       })
     }
-    else if(result == "Internal Server Error"){
+    else if(result === "Internal Server Error"){
         this.setState({
           currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Server error."/>
         })
@@ -105,8 +92,28 @@ class MainApp extends Component {
       })
     }
   }
-  async signup(username, password, display, email){
 
+  // Can return 401 (Unauthorized), 406 (Not Acceptable), 409 (Conflict), result
+  async signup(username, password, display, email){
+    var result = await signupRequest(username, password, display, email);
+    console.log(result)
+    if(result === "Unauthorized" || result === "Not Found"){
+      this.setState({
+        currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Username or password incorrect."/>
+      })
+    }
+    else if(result === "Internal Server Error"){
+        this.setState({
+          currentScreen: <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Server error."/>
+        })
+    }
+    else{
+      localStorage.setItem("shopUser", document.getElementById("username").value);
+      localStorage.setItem("shopPass", document.getElementById("password").value);
+      this.setState({
+        currentScreen: <MainScreen />,
+      })
+    }
   }
 
   goToLogin(){
@@ -123,7 +130,7 @@ class MainApp extends Component {
   async makeAPIcall(){
     var username = localStorage.getItem("shopUser");
     var password = localStorage.getItem("shopPass");
-    if(username == null || password == null){
+    if(username === null || password === null){
       this.setState({
         currentScreen: <SignupScreen goToLogin={this.goToLogin} signup={()=>this.signup()} error=""/>,
       })
@@ -131,10 +138,10 @@ class MainApp extends Component {
     }
     var state = <MainScreen />;
     var info = await loginRequest(username, password);
-    if(info == "Internal Server Error"){
+    if(info === "Internal Server Error"){
         state = <ErrorScreen />;
     }
-    else if(info == "Not Found" || info == "Unauthorized"){
+    else if(info === "Not Found" || info === "Unauthorized"){
       state = <LoginScreen goToSignup={this.goToSignup} login={()=>this.login(document.getElementById("username").value, document.getElementById("password").value)} error="Username or password incorrect."/>;
     }
     this.setState({
