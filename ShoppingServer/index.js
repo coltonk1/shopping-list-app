@@ -13,7 +13,7 @@ function encrypt(message){
 }
 
 function decrpyt(message){
-    const cipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(process.env.securityKey, "hex"), Buffer.from(process.env.ivKey, 'hex'))
+    const decipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(process.env.securityKey, "hex"), Buffer.from(process.env.ivKey, 'hex'))
     let decrypted = decipher.update(message, "hex", "utf-8");
     decrypted += decipher.final("utf8");
     return decrypted;
@@ -35,15 +35,14 @@ app.post('/login', async (req, res)=>{
     var UserData = await getData("/Users/" + encrypt(body.username.toString())).catch((error)=>{
         return 500;
     })
-    if(UserData == null){
+    if(UserData == null || UserData == undefined){
         res.sendStatus(404);
         return;
     }
-    if(UserData.password != encrypt(body.password.toString())){
+    if(UserData.Password != encrypt(body.password.toString())){
         res.sendStatus(401);
         return;
     }
-    console.log(UserData);
     res.send(UserData);
 })
 
@@ -73,7 +72,7 @@ app.post('/signup', async (req, res)=>{
 })
 
 app.get("/", (req, res)=>{
-    res.send("Express with Vercel");
+    res.send("0.1.0");
 })
 
 app.listen(5000, (error) =>{
