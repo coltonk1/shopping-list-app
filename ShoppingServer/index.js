@@ -121,7 +121,7 @@ app.post('/getLists', async (req, res)=>{
 })
 
 app.get("/", (req, res)=>{
-    res.send("0.1.0");
+    res.send("0.5.0");
 })
 
 app.listen(5000, (error) =>{
