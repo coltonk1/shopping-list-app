@@ -40,24 +40,11 @@ async function getData(location){
     return data; 
 }
 
-app.post('/getLists', async (req, res)=>{
-    const body = req.body;
-    var username = body.username.toString();
-    var password = body.password.toString();
-    var UserData = await valid(username, password);
-    if(UserData === false){
-        res.send(null);
-        return;
-    };
-    console.log(UserData.JoinedLists);
-    res.send(UserData.JoinedLists || {});
-})
-
 async function valid(username, password){
     var UserData = await getData("/Users/" + encrypt(username)).catch((error)=>{
         return false;
     })
-    if(UserData.Password != encrypt(password)){
+    if(UserData.Password !== encrypt(password)){
         return false;
     }
     return UserData;
@@ -111,6 +98,19 @@ app.post('/signup', async (req, res)=>{
     console.log(await emailEqual);
     let result = await createData("/Users/" + encrypt(body.username), {DataCreated: new Date().toJSON().slice(0, 10), DisplayName: body.display, Password: encrypt(body.password), Email: body.email});
     res.sendStatus(result);
+})
+
+app.post('/getLists', async (req, res)=>{
+    const body = req.body;
+    var username = body.username.toString();
+    var password = body.password.toString();
+    var UserData = await valid(username, password);
+    if(UserData === false){
+        res.send(null);
+        return;
+    };
+    console.log(UserData.JoinedLists);
+    res.send(UserData.JoinedLists || {});
 })
 
 app.get("/", (req, res)=>{

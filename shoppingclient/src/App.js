@@ -337,7 +337,7 @@ async function requestLists(username, password){
       },
       body: JSON.stringify(data),
   })
-  return await result.json().catch((error)=>{
+  return await result.text().catch((error)=>{
     console.log(error);
   });
 }
@@ -356,7 +356,7 @@ async function requestItems(username, password, listID){
     },
     body: JSON.stringify(data),
   })
-  return await result.json().catch((error)=>{
+  return await result.text().catch((error)=>{
     console.log(error);
   })
 }
