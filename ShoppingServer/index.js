@@ -77,12 +77,12 @@ app.post('/login', async (req, res)=>{
         res.sendStatus(500);
         return;
     })
-    if(UserData.Password != encrypt(body.password.toString())){
-        res.sendStatus(401);
-        return;
-    }
     if(UserData == null || UserData == undefined){
         res.sendStatus(404);
+        return;
+    }
+    if(UserData.Password != encrypt(body.password.toString())){
+        res.sendStatus(401);
         return;
     }
     res.send(UserData);
