@@ -4,6 +4,21 @@ const { ref, set, get, child, remove } = require("firebase-admin/database");
 const app = express();
 const crypto = require('crypto');
 require('dotenv').config();
+var cors = require('cors')
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
+
+// const proxy = require('express-http-proxy')
+// app.use('/', proxy('http://localhost:3000'))
+  
+
+// Current requests:
+// Post / Login (username, password)
+// Post / Signup (username, password, displayname)
 
 function encrypt(message){
     const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(process.env.securityKey, "hex"), Buffer.from(process.env.ivKey, 'hex'))
@@ -20,6 +35,7 @@ function decrpyt(message){
 }
 
 app.use(express.json());
+app.use(cors());
 
 async function getData(location){
     let data = (await db.ref(location).once("value")).val();
