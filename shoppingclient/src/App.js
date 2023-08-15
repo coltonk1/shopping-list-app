@@ -366,8 +366,8 @@ async function requestCreateList(username, password, listDisplay, listUsername, 
     username: username,
     password: password,
     display: listDisplay,
-    username: listUsername,
-    password: listPassword,
+    listUsername: listUsername,
+    listPassword: listPassword,
   }
   var result = await fetch(process.env.REACT_APP_api_url + "/createList", {
     method: 'POST',
@@ -454,11 +454,11 @@ class MainScreen extends Component {
         {AllItems}
         <div>
           <div className='smallTitle'>List Display Name</div>
-          <input placeholder='Enter Display Name'/>
+          <input placeholder='Enter Display Name' id = "display"/>
           <div className='smallTitle'>List Username</div>
-          <input placeholder='Enter Username'/>
+          <input placeholder='Enter Username' id = "listUsername"/>
           <div className='smallTitle'>List Password</div>
-          <input placeholder='Enter Password'/>
+          <input placeholder='Enter Password' id = "listPassword"/>
         </div>
         <br />
         <div className='largeButton' onClick={this.createList}>Create new list</div>
