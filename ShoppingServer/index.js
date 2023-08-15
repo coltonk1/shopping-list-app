@@ -158,21 +158,22 @@ app.post('/createList', async (req,res)=>{
 
 app.post('/addItem', async(req,res)=>{
     const body = req.body;
-    if (body && body.username && body.listUsername && body.password && body.itemName && body.description) {
+    if (body && body.username && body.listUsername && body.password && body.itemName) {
         var username = body.username.toString();
         var password = body.password.toString();
         var listUsername = body.listUsername.toString();
         var itemName = body.itemName.toString();
-        var description = body.description.toString();
     } else {
         // Handle the case where the expected properties are missing from the body object
         console.error("Required properties are missing from the request body");
         return;
     }
+    var description = ""
     var amount = "-";
     if(body.amount){
         amount = body.amount.toString();
     }
+    if(body.description) description = body.description.toString();
     if(amount === "" || amount === null) amount = "-";
     var UserData = await valid(username, password);
     if(UserData === false){
@@ -187,7 +188,7 @@ app.post('/addItem', async(req,res)=>{
 })
 
 app.get("/", (req, res)=>{
-    res.send("0.6.1");
+    res.send("0.6.2");
 })
 
 app.listen(5000, (error) =>{

@@ -463,6 +463,7 @@ class MainScreen extends Component {
     document.getElementById("itemName").value = "";
     document.getElementById("description").value = "";
     document.getElementById("amount").value = "";
+    this.componentDidMount();
   }
 
   async componentDidMount(){
