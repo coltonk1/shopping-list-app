@@ -2,8 +2,8 @@
 
 [Node.js](https://nodejs.org/en)
 
-[Firebase](https://firebase.google.com/)
-Used for real time databse
+[Firebase](https://firebase.google.com/)\n
+Used for real time database
 [Express](https://expressjs.com/)
 Used for backend and for API management, as well as security when getting from firebase.
 [React](https://react.dev/)
