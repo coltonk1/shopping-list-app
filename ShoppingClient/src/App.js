@@ -463,6 +463,7 @@ class MainScreen extends Component {
       listElements.push(<List id={key} display={lists[key]} key={i}/>)
       if(currentList === "") currentList = key;
     }
+    console.log(lists[currentList]);
 
     var items = {};
     var itemElements = [];
