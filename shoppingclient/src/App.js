@@ -361,32 +361,6 @@ async function requestItems(username, password, listID){
   })
 }
 
-async function requestCreateList(username, password, listDisplay, listUsername, listPassword){
-  var data = {
-    username: username,
-    password: password,
-    display: listDisplay,
-    listusername: listUsername,
-    listpassword: listPassword,
-  }
-  var result = await fetch(process.env.REACT_APP_api_url + "/createList", {
-    method: 'POST',
-    mode: "cors",
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-  var returnValue = await result.text().catch((error)=>{
-    console.log(error);
-  })
-  this.setState({
-    currentListName: listDisplay,
-    currentList: returnValue,
-  })
-  return returnValue;
-}
-
 class MainScreen extends Component {
   constructor(props){
     super(props);
@@ -396,12 +370,40 @@ class MainScreen extends Component {
       currentList: "",
       currentListName: "",
     }
+    this.requestCreateList = this.requestCreateList.bind(this)
+    this.createList = this.createList.bind(this)
+  }
+
+  async requestCreateList(username, password, listDisplay, listUsername, listPassword){
+    var data = {
+      username: username,
+      password: password,
+      display: listDisplay,
+      listusername: listUsername,
+      listpassword: listPassword,
+    }
+    var result = await fetch(process.env.REACT_APP_api_url + "/createList", {
+      method: 'POST',
+      mode: "cors",
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    var returnValue = await result.text().catch((error)=>{
+      console.log(error);
+    })
+    this.setState({
+      currentListName: listDisplay,
+      currentList: returnValue,
+    })
+    return returnValue;
   }
 
   async createList(){
-    var username = localStorage.getItem("listUser");
-    var password = localStorage.getItem("listPass");
-    var result = await requestCreateList(username, password, document.getElementById("display").value, document.getElementById("listUsername").value, document.getElementById("listPassword").value).catch((error)=>{
+    var username = localStorage.getItem("shopUser");
+    var password = localStorage.getItem("shopPass");
+    var result = await this.requestCreateList(username, password, document.getElementById("display").value, document.getElementById("listUsername").value, document.getElementById("listPassword").value).catch((error)=>{
       console.log(error);
     })
   }
