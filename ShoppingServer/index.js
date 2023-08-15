@@ -100,6 +100,20 @@ app.post('/signup', async (req, res)=>{
     res.sendStatus(result);
 })
 
+app.post('./getItems', async (req, res)=>{
+    const body = req.body;
+    var username = body.username.toString();
+    var password = body.password.toString();
+    var listUsername = body.listUsername.toString();
+    var UserData = await valid(username, password);
+    if(UserData === false){
+        res.send(null);
+        return;
+    };
+    var result = await getData("/Lists/"+listUsername+"/Items/")
+    res.send(result || []);
+})
+
 app.post('/getLists', async (req, res)=>{
     const body = req.body;
     var username = body.username.toString();

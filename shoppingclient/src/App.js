@@ -439,24 +439,20 @@ class MainScreen extends Component {
     if(lists === null || lists === {}) return;
     var listElements = [];
     var i = 0;
+    console.log(lists)
     for(var key in lists){
       i++;
-      listElements.push(<List id={key} display={lists[key].DisplayName} key={i}/>)
-      if(currentList = "") currentList = key;
+      listElements.push(<List id={key} display={lists[key]} key={i}/>)
+      if(currentList === "") currentList = key;
     }
 
     var items = {};
     var itemElements = [];
-    var currentListName = this.state.currentListName===""?"no name":this.state.currentListName;
+    var currentListName = lists[key]===null?"no name":lists[key];
     if(currentList !== "") items = await requestItems(user, pass, currentList);
     for(var key in items){
       itemElements.push(<Item name={key} description={items[key].Description} amount={items[key].Amount}/>)
-      if(currentList = "") currentList = key;
-      if(key === currentList){
-        currentListName = items[key].DisplayName;
-      }
     }
-    console.log(listElements);
 
     this.setState({
       AllItems: itemElements,
