@@ -114,18 +114,19 @@ app.post('/getLists', async (req, res)=>{
 
 app.post('/createList', async (req,res)=>{
     const body = req.body;
+    console.log(body);
     if (body && body.username && body.password && body.display && body.listUsername && body.listPassword) {
         var username = body.username.toString();
         var password = body.password.toString();
         var display = body.display.toString();
         var listUser = body.listUsername.toString();
         var listPass = body.listPassword.toString();
-        var UserData = await valid(username, password);
     } else {
         // Handle the case where the expected properties are missing from the body object
         console.error("Required properties are missing from the request body");
         return;
-    }   
+    }
+    var UserData = await valid(username, password);
     if(UserData === false){
         res.send(null);
         return;
