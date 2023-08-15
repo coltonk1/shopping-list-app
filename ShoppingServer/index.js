@@ -169,8 +169,11 @@ app.post('/addItem', async(req,res)=>{
         console.error("Required properties are missing from the request body");
         return;
     }
-    var amount = body.amount.toString();
-    if(!amount || amount === "") amount = "-";
+    var amount = "-";
+    if(body.amount){
+        amount = body.amount.toString();
+    }
+    if(amount === "" || amount === null) amount = "-";
     var UserData = await valid(username, password);
     if(UserData === false){
         res.send(null);
