@@ -361,15 +361,49 @@ async function requestItems(username, password, listID){
   })
 }
 
+async function requestCreateList(username, password, listDisplay, listUsername, listPassword){
+  var data = {
+    username: username,
+    password: password,
+    display: listDisplay,
+    username: listUsername,
+    password: listPassword,
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/createList", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  var returnValue = await result.text().catch((error)=>{
+    console.log(error);
+  })
+  this.setState({
+    currentListName: listDisplay,
+    currentList: returnValue,
+  })
+  return returnValue;
+}
+
 class MainScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
       AllItems: [],
       AllLists: [],
-      currentList: localStorage.getItem("currentList") || "",
+      currentList: "",
       currentListName: "",
     }
+  }
+
+  async createList(){
+    var username = localStorage.getItem("listUser");
+    var password = localStorage.getItem("listPass");
+    var result = await requestCreateList(username, password, document.getElementById("display").value, document.getElementById("listUsername").value, document.getElementById("listPassword").value).catch((error)=>{
+      console.log(error);
+    })
   }
 
   async componentDidMount(){
@@ -382,14 +416,16 @@ class MainScreen extends Component {
     var currentList = this.state.currentList;
     if(lists === null || lists === {}) return;
     var listElements = [];
+    var i = 0;
     for(var key in lists){
-      listElements.push(<List id={key} display={lists[key].DisplayName}/>)
+      i++;
+      listElements.push(<List id={key} display={lists[key].DisplayName} key={i}/>)
       if(currentList = "") currentList = key;
     }
 
     var items = {};
     var itemElements = [];
-    var currentListName = "no name";
+    var currentListName = this.state.currentListName===""?"no name":this.state.currentListName;
     if(currentList !== "") items = await requestItems(user, pass, currentList);
     for(var key in items){
       itemElements.push(<Item name={key} description={items[key].Description} amount={items[key].Amount}/>)
@@ -416,6 +452,16 @@ class MainScreen extends Component {
         {AllLists}
         <br></br>
         {AllItems}
+        <div>
+          <div className='smallTitle'>List Display Name</div>
+          <input placeholder='Enter Display Name'/>
+          <div className='smallTitle'>List Username</div>
+          <input placeholder='Enter Username'/>
+          <div className='smallTitle'>List Password</div>
+          <input placeholder='Enter Password'/>
+        </div>
+        <br />
+        <div className='largeButton' onClick={this.createList}>Create new list</div>
       </div>
     );
   }

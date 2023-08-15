@@ -109,8 +109,25 @@ app.post('/getLists', async (req, res)=>{
         res.send(null);
         return;
     };
-    console.log(UserData.JoinedLists);
-    res.send(UserData.JoinedLists || {});
+    res.send(UserData.JoinedLists || []);
+})
+
+app.post('/createList', async (req,res)=>{
+    const body = req.body;
+    var username = body.username.toString();
+    var password = body.password.toString();
+    var display = body.display.toString();
+    var listUser = body.listUsername.toString();
+    var listPass = body.listPassword.toString();
+    var UserData = await valid(username, password);
+    if(UserData === false){
+        res.send(null);
+        return;
+    }
+    var joinedLists = UserData.joinedLists || [];
+    joinedLists.push(encrypt(listUser));
+    await createData("/Users/" + encrypt(username) + "/JoinedLists", joinedLists);
+    await createData("/Lists/" + encrypt(listUser), {DateCreated: new Date().toJSON().slice(0, 10), DisplayName: display, JoinedUsers:[encrypt(username)], Password: encrypt(listPass)});
 })
 
 app.get("/", (req, res)=>{
