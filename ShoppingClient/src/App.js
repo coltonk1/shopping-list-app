@@ -385,7 +385,8 @@ class MainScreen extends Component {
       description: description,
       amount: amount,
     }
-    var result = await fetch(process.env.REACT_APP_api_url + "/createItem", {
+    console.log(data)
+    var result = await fetch(process.env.REACT_APP_api_url + "/addItem", {
       method: 'POST',
       mode: "cors",
       headers: {
@@ -439,7 +440,7 @@ class MainScreen extends Component {
   async createItem(){
     var username = localStorage.getItem("shopUser");
     var password = localStorage.getItem("shopPass");
-    var result = await this.requestCreateList(username, password, this.props.currentList, document.getElementById("itemName").value, document.getElementById("description").value, document.getElementById("amount").value).catch((error)=>{
+    var result = await this.requestCreateItem(username, password, this.state.currentList, document.getElementById("itemName").value, document.getElementById("description").value, document.getElementById("amount").value).catch((error)=>{
       console.log(error);
     })
     document.getElementById("itemName").value = "";
