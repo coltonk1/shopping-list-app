@@ -134,7 +134,7 @@ app.post('/createList', async (req,res)=>{
     var joinedLists = UserData.JoinedLists || [];
     joinedLists.push(encrypt(listUser));
     await createData("/Users/" + encrypt(username) + "/JoinedLists", joinedLists);
-    await createData("/Lists/" + encrypt(listUser), {DateCreated: new Date().toJSON().slice(0, 10), DisplayName: display, JoinedUsers:[encrypt(username)], Password: encrypt(listPass)});
+    await createData("/Lists/" + encrypt(listUser), {DateCreated: new Date().toJSON().slice(0, 10), DisplayName: display, JoinedUsers:[UserData.DisplayName], Password: encrypt(listPass)});
 })
 
 app.get("/", (req, res)=>{
