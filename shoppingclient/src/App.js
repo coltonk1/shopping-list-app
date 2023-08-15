@@ -366,8 +366,8 @@ async function requestCreateList(username, password, listDisplay, listUsername, 
     username: username,
     password: password,
     display: listDisplay,
-    listUsername: listUsername,
-    listPassword: listPassword,
+    listusername: listUsername,
+    listpassword: listPassword,
   }
   var result = await fetch(process.env.REACT_APP_api_url + "/createList", {
     method: 'POST',
