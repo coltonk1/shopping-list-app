@@ -183,6 +183,7 @@ app.post('/addItem', async(req,res)=>{
         await createData("/Lists/"+listUsername+"/Items/"+itemName, {DateCreated: new Date().toJSON().slice(0, 10), CreatedBy: UserData.DisplayName, CreatedByUsername: encrypt(username), Description: description, Amount: amount})
     else
         console.error("Somebody is not in the list but attempted to add an item?");
+    res.send("200");
 })
 
 app.get("/", (req, res)=>{
