@@ -114,7 +114,6 @@ app.post('/getLists', async (req, res)=>{
 
 app.post('/createList', async (req,res)=>{
     const body = req.body;
-    console.error(body)
     if (body && body.username && body.password && body.display && body.listusername && body.listpassword) {
         var username = body.username.toString();
         var password = body.password.toString();
@@ -137,6 +136,11 @@ app.post('/createList', async (req,res)=>{
     object[encrypt(username)] = UserData.DisplayName;
     await createData("/Users/" + encrypt(username) + "/JoinedLists", joinedLists);
     await createData("/Lists/" + encrypt(listUser), {DateCreated: new Date().toJSON().slice(0, 10), DisplayName: display, JoinedUsers: object, Password: encrypt(listPass)});
+})
+
+app.post('/addItem', async(req,res)=>{
+    const body = req.body;
+    
 })
 
 app.get("/", (req, res)=>{
