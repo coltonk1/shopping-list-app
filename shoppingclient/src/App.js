@@ -374,6 +374,26 @@ class MainScreen extends Component {
     this.createList = this.createList.bind(this)
   }
 
+  async requestCreateItem(username, password, listUsername){
+    var data = {
+      username: username,
+      password: password,
+      listUsername: listUsername
+    }
+    var result = await fetch(process.env.REACT_APP_api_url + "/createItem", {
+      method: 'POST',
+      mode: "cors",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    var returnValue = await result.text().catch((error)=>{
+      console.log(error);
+    })
+    return returnValue;
+  }
+
   async requestCreateList(username, password, listDisplay, listUsername, listPassword){
     var data = {
       username: username,
