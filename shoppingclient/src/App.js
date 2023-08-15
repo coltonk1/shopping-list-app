@@ -337,16 +337,16 @@ async function requestLists(username, password){
       },
       body: JSON.stringify(data),
   })
-  return await result.text().catch((error)=>{
+  return await result.json().catch((error)=>{
     console.log(error);
   });
 }
 
-async function requestItems(username, password, listID){
+async function requestItems(username, password, listUsername){
   var data = {
     username: username,
     password: password,
-    listID: listID,
+    listUsername: listUsername,
   }
   var result = await fetch(process.env.REACT_APP_api_url + "/getItems", {
     method: 'POST',
@@ -356,7 +356,7 @@ async function requestItems(username, password, listID){
     },
     body: JSON.stringify(data),
   })
-  return await result.text().catch((error)=>{
+  return await result.json().catch((error)=>{
     console.log(error);
   })
 }
@@ -436,6 +436,7 @@ class MainScreen extends Component {
         currentListName = items[key].DisplayName;
       }
     }
+    console.log(listElements);
 
     this.setState({
       AllItems: itemElements,
