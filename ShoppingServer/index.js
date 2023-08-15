@@ -182,7 +182,7 @@ app.post('/addItem', async(req,res)=>{
 })
 
 app.get("/", (req, res)=>{
-    res.send("0.6.0");
+    res.send("0.6.1");
 })
 
 app.listen(5000, (error) =>{
