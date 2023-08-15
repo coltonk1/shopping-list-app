@@ -114,6 +114,7 @@ app.post('/getLists', async (req, res)=>{
 
 app.post('/createList', async (req,res)=>{
     const body = req.body;
+    console.error(body)
     if (body && body.username && body.password && body.display && body.listusername && body.listpassword) {
         var username = body.username.toString();
         var password = body.password.toString();
