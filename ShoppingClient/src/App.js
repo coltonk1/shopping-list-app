@@ -306,19 +306,28 @@ class Item extends Component {
   render(){
     return(
       <div className = "item">
-        <div className = "itemName">{this.props.name}</div>
+        <div className = "itemName smallTitle">{this.props.name}</div>
         <div className = "itemDescription">{this.props.description}</div>
         <div className = "itemAmount">{this.props.amount}</div>
+        <div className = "itemCreator"> | By {this.props.creator}</div>
       </div>
     )
   }
 }
 
 class List extends Component {
+  constructor(props){
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick(){
+    this.props.clickedList(this.props.id)
+  }
   render(){
     return(
-      <div className='list'>
-        {this.props.name}
+      <div onClick = {this.handleClick} className='list'>
+        {this.props.display}
       </div>
     )
   }
@@ -374,6 +383,7 @@ class MainScreen extends Component {
     this.createList = this.createList.bind(this)
     this.requestCreateItem = this.requestCreateItem.bind(this)
     this.createItem = this.createItem.bind(this)
+    this.clickedList = this.clickedList.bind(this)
   }
 
   async requestCreateItem(username, password, listUsername, itemName, description, amount){
@@ -426,6 +436,13 @@ class MainScreen extends Component {
     return returnValue;
   }
 
+  async clickedList(listClicked){
+    this.setState({
+      currentList: listClicked,
+    })
+    this.componentDidMount();
+  }
+
   async createList(){
     var username = localStorage.getItem("shopUser");
     var password = localStorage.getItem("shopPass");
@@ -461,19 +478,19 @@ class MainScreen extends Component {
     var i = 0;
     for(var key in lists){
       i++;
-      listElements.push(<List id={key} display={lists[key]} key={i}/>)
+      listElements.push(<List clickedList={this.clickedList} id={key} display={lists[key]} key={i}/>)
       if(currentList === "") currentList = key;
     }
-    console.log(lists[currentList]);
 
     var items = {};
     var itemElements = [];
-    var currentListName = lists[key]===null?"no name":lists[key];
+    var currentListName = lists[currentList]===null?"no list":lists[currentList];
     if(currentList !== "") items = await requestItems(user, pass, currentList);
-    console.log(items);
-    if(items === undefined) return;
+    if(items === undefined || items === {}) return;
+    i=0;
     for(var key in items){
-      itemElements.push(<Item name={key} description={items[key].Description} amount={items[key].Amount}/>)
+      i++;
+      itemElements.push(<Item key={i} name={key} description={items[key].Description} amount={items[key].Amount} creator={items[key].CreatedBy}/>)
     }
 
     this.setState({
@@ -487,33 +504,36 @@ class MainScreen extends Component {
   render(){
     const {AllItems, AllLists, currentListName} = this.state;
     return (
-      <div id="MainWrapper">
-        {currentListName}
-        <br></br>
-        {AllLists}
-        <br></br>
-        {AllItems}
-        <div>
-          <div className='smallTitle'>List Display Name</div>
-          <input placeholder='Enter Display Name' id = "display"/>
-          <div className='smallTitle'>List Username</div>
-          <input placeholder='Enter Username' id = "listUsername"/>
-          <div className='smallTitle'>List Password</div>
-          <input placeholder='Enter Password' type='password' id = "listPassword"/>
-        </div>
-        <br />
-        <div className='largeButton' onClick={this.createList}>Create new list</div>
+      <div>
+        <div id="MainWrapper">
+          {currentListName}
+          <br></br>
+          {AllLists}
+          <br></br>
+          {AllItems}
+          <div>
+            <div className='smallTitle'>List Display Name</div>
+            <input placeholder='Enter Display Name' id = "display"/>
+            <div className='smallTitle'>List Username</div>
+            <input placeholder='Enter Username' id = "listUsername"/>
+            <div className='smallTitle'>List Password</div>
+            <input placeholder='Enter Password' type='password' id = "listPassword"/>
+          </div>
+          <br />
+          <div className='largeButton' onClick={this.createList}>Create list</div>
 
-        <div>
-          <div className='smallTitle'>Item Name</div>
-          <input placeholder='Enter Display Name' id = "itemName"/>
-          <div className='smallTitle'>Item Description</div>
-          <input placeholder='Enter Username' id = "description"/>
-          <div className='smallTitle'>Item Amount</div>
-          <input placeholder='Enter Password' type='number' id = "amount"/>
+          <div>
+            <div className='smallTitle'>Item Name</div>
+            <input placeholder='Enter Display Name' id = "itemName"/>
+            <div className='smallTitle'>Item Description</div>
+            <input placeholder='Enter Username' id = "description"/>
+            <div className='smallTitle'>Item Amount</div>
+            <input placeholder='Enter Password' type='number' id = "amount"/>
+          </div>
+          <br />
+          <div className='largeButton' onClick={this.createItem}>Add item</div>
         </div>
-        <br />
-        <div className='largeButton' onClick={this.createItem}>Add item</div>
+        <div id = "background">.</div>
       </div>
     );
   }
