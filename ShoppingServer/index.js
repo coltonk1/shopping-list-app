@@ -153,7 +153,27 @@ app.post('/createList', async (req,res)=>{
 
 app.post('/addItem', async(req,res)=>{
     const body = req.body;
-    
+    if (body && body.username && body.listUsername && body.password && body.itemName && body.description && body.amount) {
+        var username = body.username.toString();
+        var password = body.password.toString();
+        var listUsername = body.listUsername.toString();
+        var itemName = body.itemName.toString();
+        var description = body.description.toString();
+        var amount = body.amount.toString();
+    } else {
+        // Handle the case where the expected properties are missing from the body object
+        console.error("Required properties are missing from the request body");
+        return;
+    }
+    var UserData = await valid(username, password);
+    if(UserData === false){
+        res.send(null);
+        return;
+    };
+    if(UserData.JoinedLists[encrypt(listUsername)] !== null && UserData.JoinedLists[encrypt(listUsername)] !== undefined)
+        await createData("/Lists/"+listUser+"/Items/"+itemName, {DateCreated: new Date().toJSON().slice(0, 10), CreatedBy: UserData.DisplayName, CreatedByUsername: encrypt(username), Description: description, Amount: amount})
+    else
+        console.error("Somebody is not in the list but attempted to add an item?");
 })
 
 app.get("/", (req, res)=>{

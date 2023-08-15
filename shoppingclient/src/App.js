@@ -439,7 +439,6 @@ class MainScreen extends Component {
     if(lists === null || lists === {}) return;
     var listElements = [];
     var i = 0;
-    console.log(lists)
     for(var key in lists){
       i++;
       listElements.push(<List id={key} display={lists[key]} key={i}/>)
@@ -450,6 +449,8 @@ class MainScreen extends Component {
     var itemElements = [];
     var currentListName = lists[key]===null?"no name":lists[key];
     if(currentList !== "") items = await requestItems(user, pass, currentList);
+    console.log(items);
+    if(items === undefined) return;
     for(var key in items){
       itemElements.push(<Item name={key} description={items[key].Description} amount={items[key].Amount}/>)
     }
