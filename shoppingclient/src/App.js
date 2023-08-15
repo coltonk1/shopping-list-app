@@ -372,13 +372,18 @@ class MainScreen extends Component {
     }
     this.requestCreateList = this.requestCreateList.bind(this)
     this.createList = this.createList.bind(this)
+    this.requestCreateItem = this.requestCreateItem.bind(this)
+    this.createItem = this.createItem.bind(this)
   }
 
-  async requestCreateItem(username, password, listUsername){
+  async requestCreateItem(username, password, listUsername, itemName, description, amount){
     var data = {
       username: username,
       password: password,
-      listUsername: listUsername
+      listUsername: listUsername,
+      itemName: itemName,
+      description: description,
+      amount: amount,
     }
     var result = await fetch(process.env.REACT_APP_api_url + "/createItem", {
       method: 'POST',
@@ -426,6 +431,20 @@ class MainScreen extends Component {
     var result = await this.requestCreateList(username, password, document.getElementById("display").value, document.getElementById("listUsername").value, document.getElementById("listPassword").value).catch((error)=>{
       console.log(error);
     })
+    document.getElementById("display").value = "";
+    document.getElementById("listUsername").value = "";
+    document.getElementById("listPassword").value = "";
+  }
+
+  async createItem(){
+    var username = localStorage.getItem("shopUser");
+    var password = localStorage.getItem("shopPass");
+    var result = await this.requestCreateList(username, password, this.props.currentList, document.getElementById("itemName").value, document.getElementById("description").value, document.getElementById("amount").value).catch((error)=>{
+      console.log(error);
+    })
+    document.getElementById("itemName").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("amount").value = "";
   }
 
   async componentDidMount(){
@@ -478,10 +497,21 @@ class MainScreen extends Component {
           <div className='smallTitle'>List Username</div>
           <input placeholder='Enter Username' id = "listUsername"/>
           <div className='smallTitle'>List Password</div>
-          <input placeholder='Enter Password' id = "listPassword"/>
+          <input placeholder='Enter Password' type='password' id = "listPassword"/>
         </div>
         <br />
         <div className='largeButton' onClick={this.createList}>Create new list</div>
+
+        <div>
+          <div className='smallTitle'>Item Name</div>
+          <input placeholder='Enter Display Name' id = "itemName"/>
+          <div className='smallTitle'>Item Description</div>
+          <input placeholder='Enter Username' id = "description"/>
+          <div className='smallTitle'>Item Amount</div>
+          <input placeholder='Enter Password' type='number' id = "amount"/>
+        </div>
+        <br />
+        <div className='largeButton' onClick={this.createItem}>Add item</div>
       </div>
     );
   }
