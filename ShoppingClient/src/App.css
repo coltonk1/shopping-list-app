@@ -110,8 +110,8 @@ input::placeholder {
 
 #lock {
   width: 55vw;
-  position: absolute;
-  top: 10vh;
+  position: fixed;
+  bottom: 65vh;
   left: 0;
   right: 0;
   filter: brightness(500%);
@@ -325,4 +325,16 @@ input::placeholder {
 
 .widthFull {
   width: 100vw;
+}
+
+#signout {
+  color: white;
+  position: fixed;
+  right: 5vw;
+  bottom: 5vw;
+}
+
+.smallIcon {
+  height: 30px;
+  max-height: 30px;
 }

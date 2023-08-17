@@ -1,6 +1,8 @@
 import './App.css';
 import React, {useEffect, Component} from 'react';
 import lockImage from './images/shop2.svg';
+import settingsImage from './images/settings.png';
+import barsImage from './images/3bars.png';
 
 async function loginRequest(username, password){
   var data = {
@@ -454,6 +456,7 @@ class MainScreen extends Component {
     this.createItem = this.createItem.bind(this)
     this.clickedList = this.clickedList.bind(this)
     this.removeItem = this.removeItem.bind(this);
+    this.removeListFromAccount = this.removeListFromAccount.bind(this);
   }
 
   async requestCreateItem(username, password, listUsername, itemName, description, amount){
@@ -619,7 +622,16 @@ class MainScreen extends Component {
   async removeListFromAccount(){
     var user = localStorage.getItem("shopUser");
     var pass = localStorage.getItem("shopPass");
-    await requestRemoveListFromAccount(user, pass, currentList);
+    await requestRemoveListFromAccount(user, pass, this.state.currentList);
+
+    this.componentDidMount();
+    this.displayListSettings();
+  }
+
+  signOut(){
+    localStorage.removeItem("shopUser");
+    localStorage.removeItem("shopPass");
+    window.location.reload(false);
   }
 
   render(){
@@ -627,9 +639,11 @@ class MainScreen extends Component {
     return (
       <div>
         <div id="MainWrapper">
+          <div id = "signout" onClick={this.signOut}>Sign out</div>
+
           <div id = "CurrentList" className='largeTitle'>
-            <div id = "displayListSettings" onClick={this.displayListSettings}>set</div>
-            <div id = "displayAllLists" onClick={this.showAllLists}>---</div>
+            <div id = "displayListSettings" onClick={this.displayListSettings}><img className="smallIcon" src={settingsImage}></img></div>
+            <div id = "displayAllLists" onClick={this.showAllLists}><img className="smallIcon" src={barsImage}></img></div>
             {currentListName}
           </div>
 
