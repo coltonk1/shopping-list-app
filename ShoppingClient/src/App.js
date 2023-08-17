@@ -522,10 +522,11 @@ class MainScreen extends Component {
     this.displayItemForm();
   }
 
-  removeItem(name){
+  async removeItem(name){
     var user = localStorage.getItem("shopUser");
     var pass = localStorage.getItem("shopPass");
-    requestRemoveItem(user, pass, name, this.state.currentList)
+    await requestRemoveItem(user, pass, name, this.state.currentList);
+    this.componentDidMount();
   }
 
   async componentDidMount(){

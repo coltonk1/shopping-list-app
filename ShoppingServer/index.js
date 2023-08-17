@@ -169,7 +169,8 @@ app.post('/removeItem', async(req, res)=>{
         return;
     }
 
-    db.ref("/Lists/"+listUsername+"/Items/"+itemName).remove();
+    await db.ref("/Lists/"+listUsername+"/Items/"+itemName).remove();
+    res.send("200")
 })
 
 app.post('/addItem', async(req,res)=>{
