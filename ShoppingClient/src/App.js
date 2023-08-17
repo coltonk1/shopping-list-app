@@ -280,11 +280,11 @@ class SignupScreen extends Component {
         <div id = "area" className = "bottom">
           <div id = "error">{this.props.error}</div>
           <div>
-            <div className='smallTitle'>Username</div>
+            <div className='smallTitle'>Username *</div>
             <input  placeholder='Enter username' id="username"/>
-            <div className='smallTitle'>Password</div>
+            <div className='smallTitle'>Password *</div>
             <input placeholder='Enter password' type='password' id="password"/>
-            <div className='smallTitle'>Display Name</div>
+            <div className='smallTitle'>Display Name *</div>
             <input  placeholder='Enter display name' id = "displayName"/>
             <div className='smallTitle'>email</div>
             <input placeholder='Enter email' type='email' id="email"/>
@@ -302,14 +302,44 @@ class SignupScreen extends Component {
   }
 }
 
+class SpecialItem extends Component {
+  render(){
+    return(
+      <div onClick={this.props.handleClick} className = "item">
+            <div className='specialItem'>+</div>
+      </div>
+    )
+  }
+}
+
 class Item extends Component {
+  constructor(props){
+    super(props);
+    this.handleRemove = this.handleRemove.bind(this);
+  }
+
+  handleRemove(){
+    this.props.removeItem(this.props.name);
+  }
+
   render(){
     return(
       <div className = "item">
+        <div className = "remove" onClick={this.handleRemove}>x</div>
         <div className = "itemName smallTitle">{this.props.name}</div>
         <div className = "itemDescription">{this.props.description}</div>
         <div className = "itemAmount">{this.props.amount}</div>
-        <div className = "itemCreator"> | By {this.props.creator}</div>
+        <div className = "itemCreator">{this.props.creator}</div>
+      </div>
+    )
+  }
+}
+
+class SpecialList extends Component {
+  render(){
+    return (
+      <div onClick={this.props.handleClick} className = "list">
+        <div className = 'specialList largeTitle'>+</div>
       </div>
     )
   }
@@ -326,7 +356,7 @@ class List extends Component {
   }
   render(){
     return(
-      <div onClick = {this.handleClick} className='list'>
+      <div onClick = {this.handleClick} className='list largeTitle'>
         {this.props.display}
       </div>
     )
@@ -349,6 +379,26 @@ async function requestLists(username, password){
   return await result.json().catch((error)=>{
     console.log(error);
   });
+}
+
+async function requestRemoveItem(username, password, item, list){
+  var data = {
+    username: username,
+    password: password,
+    listUsername: list,
+    itemName: item,
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/removeItem", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  return await result.json().catch((error)=>{
+    console.log(error);
+  })
 }
 
 async function requestItems(username, password, listUsername){
@@ -384,6 +434,7 @@ class MainScreen extends Component {
     this.requestCreateItem = this.requestCreateItem.bind(this)
     this.createItem = this.createItem.bind(this)
     this.clickedList = this.clickedList.bind(this)
+    this.removeItem = this.removeItem.bind(this);
   }
 
   async requestCreateItem(username, password, listUsername, itemName, description, amount){
@@ -441,6 +492,7 @@ class MainScreen extends Component {
       currentList: listClicked,
     })
     this.componentDidMount();
+    this.showAllLists();
   }
 
   async createList(){
@@ -452,6 +504,9 @@ class MainScreen extends Component {
     document.getElementById("display").value = "";
     document.getElementById("listUsername").value = "";
     document.getElementById("listPassword").value = "";
+    this.displayListForm();
+    this.showAllLists();
+    this.componentDidMount();
   }
 
   async createItem(){
@@ -464,6 +519,13 @@ class MainScreen extends Component {
     document.getElementById("description").value = "";
     document.getElementById("amount").value = "";
     this.componentDidMount();
+    this.displayItemForm();
+  }
+
+  removeItem(name){
+    var user = localStorage.getItem("shopUser");
+    var pass = localStorage.getItem("shopPass");
+    requestRemoveItem(user, pass, name, this.state.currentList)
   }
 
   async componentDidMount(){
@@ -491,7 +553,7 @@ class MainScreen extends Component {
     i=0;
     for(var key in items){
       i++;
-      itemElements.push(<Item key={i} name={key} description={items[key].Description} amount={items[key].Amount} creator={items[key].CreatedBy}/>)
+      itemElements.push(<Item removeItem={this.removeItem} key={i} name={key} description={items[key].Description} amount={items[key].Amount} creator={items[key].CreatedBy}/>)
     }
 
     this.setState({
@@ -502,37 +564,82 @@ class MainScreen extends Component {
     })
   }
 
+  displayItemForm(){
+    var itemForm = document.getElementById("itemForm");
+    if(itemForm.style.display === "block")
+      itemForm.style.display = "none";
+    else
+      itemForm.style.display = "block";
+  }
+
+  displayListForm(){
+    var listForm = document.getElementById("listForm");
+    if(listForm.style.display === "block")
+      listForm.style.display = "none";
+    else
+      listForm.style.display = "block";
+  }
+
+  showAllLists(){
+    var allLists = document.getElementById("allLists");
+    if(allLists.style.display === "block")
+      allLists.style.display = "none";
+    else
+      allLists.style.display = "block";
+  }
+
   render(){
     const {AllItems, AllLists, currentListName} = this.state;
     return (
       <div>
         <div id="MainWrapper">
-          {currentListName}
-          <br></br>
-          {AllLists}
-          <br></br>
-          {AllItems}
-          <div>
-            <div className='smallTitle'>List Display Name</div>
-            <input placeholder='Enter Display Name' id = "display"/>
-            <div className='smallTitle'>List Username</div>
-            <input placeholder='Enter Username' id = "listUsername"/>
-            <div className='smallTitle'>List Password</div>
-            <input placeholder='Enter Password' type='password' id = "listPassword"/>
+          <div id = "CurrentList" className='largeTitle'>
+            <div id = "displayAllLists" onClick={this.showAllLists}>---</div>
+            {currentListName}
           </div>
-          <br />
-          <div className='largeButton' onClick={this.createList}>Create list</div>
 
-          <div>
-            <div className='smallTitle'>Item Name</div>
-            <input placeholder='Enter Display Name' id = "itemName"/>
-            <div className='smallTitle'>Item Description</div>
-            <input placeholder='Enter Username' id = "description"/>
-            <div className='smallTitle'>Item Amount</div>
-            <input placeholder='Enter Password' type='number' id = "amount"/>
+          <div id = "allLists">
+            <div className='formBackground'></div>
+            <div className='higher'>
+              <SpecialList handleClick={this.displayListForm}/>
+              {AllLists}
+            </div>
           </div>
           <br />
-          <div className='largeButton' onClick={this.createItem}>Add item</div>
+          <SpecialItem handleClick={this.displayItemForm}/>
+          {AllItems}
+
+          <div id = "listForm">
+            <div className='higher'>
+              <div>
+                <div className='smallTitle'>List Display Name *</div>
+                <input placeholder='Enter Display Name' id = "display"/>
+                <div className='smallTitle'>List Username *</div>
+                <input placeholder='Enter Username' id = "listUsername"/>
+                <div className='smallTitle'>List Password *</div>
+                <input placeholder='Enter Password' id = "listPassword"/>
+              </div>
+              <br />
+              <div className='largeButton' onClick={this.createList}>Create list</div>
+            </div>
+            <div className='formBackground'></div>
+          </div>
+
+          <div id = "itemForm">
+            <div className = "higher">
+              <div>
+                <div className='smallTitle'>Item Name *</div>
+                <input placeholder='Enter Display Name' id = "itemName"/>
+                <div className='smallTitle'>Item Description</div>
+                <input placeholder='Enter Username' id = "description"/>
+                <div className='smallTitle'>Item Amount</div>
+                <input placeholder='Enter Password' type='number' id = "amount"/>
+              </div>
+              <br />
+              <div className='largeButton' onClick={this.createItem}>Add item</div>
+            </div>
+            <div className='formBackground'></div>
+          </div>
         </div>
         <div id = "background">.</div>
       </div>

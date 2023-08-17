@@ -156,6 +156,22 @@ app.post('/createList', async (req,res)=>{
     res.send(encrypt(listUser));
 })
 
+app.post('/removeItem', async(req, res)=>{
+    const body = req.body;
+    if(body && body.username && body.password && body.listUsername && body.itemName){
+        var username = body.username.toString();
+        var password = body.password.toString();
+        var listUsername = body.listUsername.toString();
+        var itemName = body.itemName.toString();
+    }
+    else{
+        console.error("Required properties missing.");
+        return;
+    }
+
+    db.ref("/Lists/"+listUsername+"/Items/"+itemName).remove();
+})
+
 app.post('/addItem', async(req,res)=>{
     const body = req.body;
     if (body && body.username && body.listUsername && body.password && body.itemName) {
