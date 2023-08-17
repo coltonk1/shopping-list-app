@@ -158,7 +158,7 @@ input::placeholder {
 }
 .itemName {
   margin-top: 0;
-  width: 70vw;
+  width: 65vw;
   overflow-wrap: break-word;
   margin-left: 0;
   color: #101015;
@@ -201,10 +201,10 @@ input::placeholder {
   color: #101015;
   width: 100%;
   text-align: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   background: #75ecce;
-  z-index: 2;
+  z-index: 5;
   box-shadow: 0 0 15px #92573b;
 }
 
@@ -264,10 +264,11 @@ input::placeholder {
   position: absolute;
   left: 5vw;
   top: 0;
+  bottom: 0;
+  height: fit-content;
   color: black;
   z-index: 5;
   display: block;
-  height: 100%;
 }
 
 .list {
@@ -277,4 +278,51 @@ input::placeholder {
   margin-top: 5px;
   text-align: center;
   background: #10101520;
+}
+
+.remove {
+  color: red;
+  position: absolute;
+  right: 5vw;
+  top: 2vw;
+  font-weight: bolder;
+}
+
+.back {
+  color: white;
+  font-weight: bolder;
+  font-size: 50px;
+  position: fixed;
+  left: 5vw;
+  top: 2vw;
+  width: 100px;
+  height: 10px;
+}
+
+#displayListSettings {
+  right: 5vw;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  color: black;
+  position: absolute;
+}
+
+#listSettings {
+  position: absolute;
+  display: none;
+  z-index: 3;
+}
+
+#leaveListButton {
+  position: relative;
+  border-color: red;
+  color: red;
+  background-color: #ff000020;
+  margin-top: 5vh;
+  backdrop-filter: blur(20px);
+}
+
+.widthFull {
+  width: 100vw;
 }

@@ -420,6 +420,25 @@ async function requestItems(username, password, listUsername){
   })
 }
 
+async function requestRemoveListFromAccount(username, password, listUsername){
+  var data = {
+    username: username,
+    password: password,
+    listUsername: listUsername,
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/removeListFromAccount", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  return await result.json().catch((error)=>{
+    console.log(error);
+  })
+}
+
 class MainScreen extends Component {
   constructor(props){
     super(props);
@@ -589,19 +608,44 @@ class MainScreen extends Component {
       allLists.style.display = "block";
   }
 
+  displayListSettings(){
+    var listSettings = document.getElementById("listSettings");
+    if(listSettings.style.display === "block")
+      listSettings.style.display = "none";
+    else
+      listSettings.style.display = "block";
+  }
+
+  async removeListFromAccount(){
+    var user = localStorage.getItem("shopUser");
+    var pass = localStorage.getItem("shopPass");
+    await requestRemoveListFromAccount(user, pass, currentList);
+  }
+
   render(){
     const {AllItems, AllLists, currentListName} = this.state;
     return (
       <div>
         <div id="MainWrapper">
           <div id = "CurrentList" className='largeTitle'>
+            <div id = "displayListSettings" onClick={this.displayListSettings}>set</div>
             <div id = "displayAllLists" onClick={this.showAllLists}>---</div>
             {currentListName}
+          </div>
+
+          <div id = "listSettings">
+            <div className='formBackground'></div>
+            <div className='higher'>
+              <div className='widthFull'>
+                <div id = "leaveListButton" className='largeButton' onClick={this.removeListFromAccount}>Leave this list</div>
+              </div>
+            </div>
           </div>
 
           <div id = "allLists">
             <div className='formBackground'></div>
             <div className='higher'>
+              <div className="back" onClick={this.showAllLists}>{"<"}</div>
               <SpecialList handleClick={this.displayListForm}/>
               {AllLists}
             </div>
@@ -612,6 +656,7 @@ class MainScreen extends Component {
 
           <div id = "listForm">
             <div className='higher'>
+              <div className="back" onClick={this.displayListForm}>{"<"}</div>
               <div>
                 <div className='smallTitle'>List Display Name *</div>
                 <input placeholder='Enter Display Name' id = "display"/>
@@ -628,6 +673,7 @@ class MainScreen extends Component {
 
           <div id = "itemForm">
             <div className = "higher">
+              <div className="back" onClick={this.displayItemForm}>{"<"}</div>
               <div>
                 <div className='smallTitle'>Item Name *</div>
                 <input placeholder='Enter Display Name' id = "itemName"/>

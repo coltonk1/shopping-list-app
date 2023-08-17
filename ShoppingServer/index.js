@@ -173,6 +173,23 @@ app.post('/removeItem', async(req, res)=>{
     res.send("200")
 })
 
+app.post("/removeListFromAccount", async(req,res)=>{
+    const body = req.body;
+    if(body && body.username && body.password && body.listUsername){
+        var username = body.username.toString();
+        var password = body.password.toString();
+        var listUsername = body.listUsername.toString();
+    } else {
+        console.error("Properties missing");
+        return;
+    }
+
+    await db.ref("/Lists/" + listUsername + "/JoinedUsers/" + encrypt(username)).remove();
+    await db.ref("/Users/" + encrypt(username) + "/JoinedLists/" + listUsername).remove();
+
+    res.send("200");
+})
+
 app.post('/addItem', async(req,res)=>{
     const body = req.body;
     if (body && body.username && body.listUsername && body.password && body.itemName) {
