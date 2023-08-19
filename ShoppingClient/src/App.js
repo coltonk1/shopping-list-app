@@ -476,6 +476,7 @@ class MainScreen extends Component {
       AllLists: [],
       currentList: "",
       currentListName: "",
+      listInfo: {username: "", password: ""},
     }
     this.requestCreateList = this.requestCreateList.bind(this)
     this.createList = this.createList.bind(this)

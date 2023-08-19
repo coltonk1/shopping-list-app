@@ -223,8 +223,10 @@ app.post("/listInfo", async(req,res)=>{
     }
 
     var listPassword = await getData("/Lists/"+listUsername+"/Password");
+    var returnUsername = decrpyt(listUsername);
+    var returnPassword = decrpyt(listPassword);
 
-    res.send({username: decrpyt(listUsername), password: decrpyt(listPassword)});
+    res.send({username: returnUsername.slice(0, returnUsername.length-16), password: returnPassword.slice(0, returnPassword.length-16)});
 })
 
 app.post('/addItem', async(req,res)=>{
