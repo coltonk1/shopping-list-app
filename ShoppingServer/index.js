@@ -208,7 +208,7 @@ app.post("/joinList", async(req,res)=>{
     await createData("/Lists/"+encrypt(listUsername)+"/JoinedUsers/"+encrypt(username), UserData.DisplayName);
     await createData("/Users/"+encrypt(username)+"/JoinedLists/"+encrypt(listUsername), ListData.DisplayName);
 
-    res.send("200");
+    res.send(encrypt(listUsername));
 })
 
 app.post("/listInfo", async(req,res)=>{

@@ -246,6 +246,7 @@ input::placeholder {
   position: relative;
   z-index: 2;
   height: fit-content;
+  margin-left: 0;
 }
 
 #allLists {
@@ -329,7 +330,7 @@ input::placeholder {
 
 #signout {
   color: white;
-  position: fixed;
+  position: absolute;
   right: 5vw;
   bottom: 5vw;
 }
@@ -337,4 +338,14 @@ input::placeholder {
 .smallIcon {
   height: 30px;
   max-height: 30px;
+}
+
+#allListContainer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  width: fit-content;
+  max-height: 60vh;
+  overflow-y: scroll;
 }

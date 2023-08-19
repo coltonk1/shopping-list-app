@@ -468,6 +468,26 @@ async function requestRemoveListFromAccount(username, password, listUsername){
   })
 }
 
+async function requestJoinList(username, password, listUsername, listPassword){
+  var data = {
+    username: username,
+    password: password,
+    listUsername: listUsername,
+    listPassword: listPassword
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/joinList", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  return await result.text().catch((error)=>{
+    console.log(error);
+  })
+}
+
 class MainScreen extends Component {
   constructor(props){
     super(props);
@@ -486,6 +506,7 @@ class MainScreen extends Component {
     this.removeItem = this.removeItem.bind(this);
     this.removeListFromAccount = this.removeListFromAccount.bind(this);
     this.displayListSettings = this.displayListSettings.bind(this);
+    this.joinList = this.joinList.bind(this);
   }
 
   async requestCreateItem(username, password, listUsername, itemName, description, amount){
@@ -555,6 +576,21 @@ class MainScreen extends Component {
     document.getElementById("display").value = "";
     document.getElementById("listUsername").value = "";
     document.getElementById("listPassword").value = "";
+    this.displayListForm();
+    this.showAllLists();
+    this.componentDidMount();
+  }
+
+  async joinList(){
+    var username = localStorage.getItem("shopUser");
+    var password = localStorage.getItem("shopPass");
+    var result = await this.requestJoinList(username, password, document.getElementById("joinListUsername").value, document.getElementById("joinListPassword").value).catch((error)=>{
+      console.log(error);
+    })
+    document.getElementById("display").value = "";
+    document.getElementById("listUsername").value = "";
+    document.getElementById("listPassword").value = "";
+    this.setState({currentList: result})
     this.displayListForm();
     this.showAllLists();
     this.componentDidMount();
@@ -701,10 +737,13 @@ class MainScreen extends Component {
             <div className='formBackground'></div>
             <div className='higher'>
               <div className="back" onClick={this.showAllLists}>{"<"}</div>
-              <SpecialList handleClick={this.displayListForm}/>
-              {AllLists}
+              <div id = "allListContainer">
+                <SpecialList handleClick={this.displayListForm}/>
+                {AllLists}
+              </div>
             </div>
           </div>
+          
           <br />
           <SpecialItem handleClick={this.displayItemForm}/>
           {AllItems}
@@ -722,6 +761,15 @@ class MainScreen extends Component {
               </div>
               <br />
               <div className='largeButton' onClick={this.createList}>Create list</div>
+              <br />
+              <div>
+                <div className='smallTitle'>List Username *</div>
+                <input placeholder='Enter Username' id = "joinListUsername"/>
+                <div className='smallTitle'>List Password *</div>
+                <input placeholder='Enter Password' id = "joinListPassword"/>
+              </div>
+              <br />
+              <div className='largeButton' onClick={this.joinList}>Join list</div>
             </div>
             <div className='formBackground'></div>
           </div>
