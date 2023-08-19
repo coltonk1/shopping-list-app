@@ -111,7 +111,7 @@ input::placeholder {
 #lock {
   width: 55vw;
   position: fixed;
-  bottom: 65vh;
+  bottom: 550px;
   left: 0;
   right: 0;
   filter: brightness(500%);

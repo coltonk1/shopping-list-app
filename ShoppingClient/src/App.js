@@ -241,6 +241,10 @@ class ErrorScreen extends Component {
 }
 
 class LoginScreen extends Component {
+  componentDidMount(){
+    document.getElementById("lock").style.bottom = window.innerHeight/1.5 + "px";
+  }
+
   render(){
     return(
       <div id = "wrapper">
@@ -273,6 +277,10 @@ class LoginScreen extends Component {
 }
 
 class SignupScreen extends Component {
+  componentDidMount(){
+    document.getElementById("lock").style.bottom = window.innerHeight/1.5 + "px";
+  }
+
   render(){
     return(
       <div id = "wrapper">
@@ -403,6 +411,25 @@ async function requestRemoveItem(username, password, item, list){
   })
 }
 
+async function requestListInformation(username, password, listUsername){
+  var data = {
+    username: username,
+    password: password,
+    listUsername: listUsername,
+  }
+  var result = await fetch(process.env.REACT_APP_api_url + "/listInfo", {
+    method: 'POST',
+    mode: "cors",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  return await result.json().catch((error)=>{
+    console.log(error);
+  })
+}
+
 async function requestItems(username, password, listUsername){
   var data = {
     username: username,
@@ -457,6 +484,7 @@ class MainScreen extends Component {
     this.clickedList = this.clickedList.bind(this)
     this.removeItem = this.removeItem.bind(this);
     this.removeListFromAccount = this.removeListFromAccount.bind(this);
+    this.displayListSettings = this.displayListSettings.bind(this);
   }
 
   async requestCreateItem(username, password, listUsername, itemName, description, amount){
@@ -611,12 +639,17 @@ class MainScreen extends Component {
       allLists.style.display = "block";
   }
 
-  displayListSettings(){
+  async displayListSettings(){
     var listSettings = document.getElementById("listSettings");
     if(listSettings.style.display === "block")
       listSettings.style.display = "none";
-    else
+    else{
+      var user = localStorage.getItem("shopUser");
+      var pass = localStorage.getItem("shopPass");
+      var listInfo = await requestListInformation(user, pass, this.state.currentList);
+      this.setState({listInfo: listInfo})
       listSettings.style.display = "block";
+    }
   }
 
   async removeListFromAccount(){
@@ -635,7 +668,7 @@ class MainScreen extends Component {
   }
 
   render(){
-    const {AllItems, AllLists, currentListName} = this.state;
+    const {listInfo, AllItems, AllLists, currentListName} = this.state;
     return (
       <div>
         <div id="MainWrapper">
@@ -651,6 +684,13 @@ class MainScreen extends Component {
             <div className='formBackground'></div>
             <div className='higher'>
               <div className='widthFull'>
+                <br/>
+                <div className = "smallTitle">List Username:</div>
+                <div className='smallTitle'>{listInfo.username}</div>
+                <br/>
+                <div className = "smallTitle">List Password:</div>
+                <div className='smallTitle'>{listInfo.password}</div>
+                <br />
                 <div id = "leaveListButton" className='largeButton' onClick={this.removeListFromAccount}>Leave this list</div>
               </div>
             </div>

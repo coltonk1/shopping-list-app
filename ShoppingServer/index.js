@@ -190,6 +190,43 @@ app.post("/removeListFromAccount", async(req,res)=>{
     res.send("200");
 })
 
+app.post("/joinList", async(req,res)=>{
+    const body = req.body;
+    if(body && body.username && body.password && body.listUsername, body.listPassword){
+        var username = body.username.toString();
+        var password = body.password.toString();
+        var listUsername = body.listUsername.toString();
+        var listPassword = body.listPassword.toString();
+    } else {
+        console.error("Properties missing");
+        return;
+    }
+
+    var UserData = await getData("/Users/"+encrypt(username));
+    var ListData = await getData("/Lists/"+encrypt(listUsername));
+
+    await createData("/Lists/"+encrypt(listUsername)+"/JoinedUsers/"+encrypt(username), UserData.DisplayName);
+    await createData("/Users/"+encrypt(username)+"/JoinedLists/"+encrypt(listUsername), ListData.DisplayName);
+
+    res.send("200");
+})
+
+app.post("/listInfo", async(req,res)=>{
+    const body = req.body;
+    if(body && body.username && body.password && body.listUsername){
+        var username = body.username.toString();
+        var password = body.password.toString();
+        var listUsername = body.listUsername.toString();
+    } else {
+        console.error("Properties missing");
+        return;
+    }
+
+    var listPassword = await getData("/Lists/"+listUsername+"/Password");
+
+    res.send({username: decrpyt(listUsername), password: decrpyt(listPassword)});
+})
+
 app.post('/addItem', async(req,res)=>{
     const body = req.body;
     if (body && body.username && body.listUsername && body.password && body.itemName) {
