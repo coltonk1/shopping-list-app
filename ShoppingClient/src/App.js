@@ -584,7 +584,7 @@ class MainScreen extends Component {
   async joinList(){
     var username = localStorage.getItem("shopUser");
     var password = localStorage.getItem("shopPass");
-    var result = await this.requestJoinList(username, password, document.getElementById("joinListUsername").value, document.getElementById("joinListPassword").value).catch((error)=>{
+    var result = await requestJoinList(username, password, document.getElementById("joinListUsername").value, document.getElementById("joinListPassword").value).catch((error)=>{
       console.log(error);
     })
     document.getElementById("display").value = "";
@@ -641,7 +641,8 @@ class MainScreen extends Component {
     i=0;
     for(var key in items){
       i++;
-      itemElements.push(<Item removeItem={this.removeItem} key={i} name={key} description={items[key].Description} amount={items[key].Amount} creator={items[key].CreatedBy}/>)
+      if(key != null)
+        itemElements.push(<Item removeItem={this.removeItem} key={i} name={key} description={items[key].Description} amount={items[key].Amount} creator={items[key].CreatedBy}/>)
     }
 
     this.setState({
@@ -781,9 +782,9 @@ class MainScreen extends Component {
                 <div className='smallTitle'>Item Name *</div>
                 <input placeholder='Enter Display Name' id = "itemName"/>
                 <div className='smallTitle'>Item Description</div>
-                <input placeholder='Enter Username' id = "description"/>
+                <input placeholder='Enter Description' id = "description"/>
                 <div className='smallTitle'>Item Amount</div>
-                <input placeholder='Enter Password' type='number' id = "amount"/>
+                <input placeholder='Enter Amount' type='number' id = "amount"/>
               </div>
               <br />
               <div className='largeButton' onClick={this.createItem}>Add item</div>
