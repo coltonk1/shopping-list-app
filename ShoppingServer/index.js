@@ -5,7 +5,6 @@ const app = express();
 const crypto = require('crypto');
 require('dotenv').config();
 var cors = require('cors');
-const rateLimit = require('express-rate-limit');
 
 app.use(cors({
     allowedHeaders: ['Content-Type'], 
@@ -14,16 +13,6 @@ app.use(cors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false
 }));
-
-// const limiter = rateLimit({
-// 	windowMs: 5 * 60 * 1000, // 15 minutes
-// 	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-// 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-// 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-// 	// store: ... , // Use an external store for more precise rate limiting
-// })
-
-// app.use(limiter);
 
 function encrypt(message){
     const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(process.env.securityKey, "hex"), Buffer.from(process.env.ivKey, 'hex'))
